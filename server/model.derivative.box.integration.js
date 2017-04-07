@@ -71,7 +71,7 @@ router.post('/integration/sendToTranslation', jsonParser, function (req, res) {
       postBuckets.policyKey = "transient"; // expires in 24h
 
       buckets.createBucket(postBuckets, null, function (err, data, response) {
-        if (response.statusCode != 200 && response.statusCode != 409 /*bucket already exists*/) {
+        if (err && err.statusCode!=409){
           console.log('Error creating bucket ' + ossBucketKey + ' ' + response.statusCode);
           res.status(response.statusCode).json({error: "Cannot translate: Create Bucket " + response.statusMessage});
           return;
@@ -131,7 +131,7 @@ router.post('/integration/sendToTranslation', jsonParser, function (req, res) {
                 });
               });
             }
-          });
+          }).catch(function (e) { console.log(e); res.status(500).json({error: e.error.body}) });;
         });
       });
     });
