@@ -4,7 +4,7 @@
   "description": "Transparent use of Model Derivative to view Box compatible files.",
   "dependencies": {
     "body-parser": "*",
-    "bootstrap": "*",
+    "bootstrap": "3.3.7",
     "box-node-sdk": "*",
     "cookie-parser": "*",
     "express": "*",
@@ -13,9 +13,9 @@
     "forge-model-derivative": "*",
     "forge-oauth2": "*",
     "forge-oss": "*",
-    "jquery": "*",
-    "jstree": "*",
-    "moment": "*",
+    "jquery": "3.2.1",
+    "jstree": "3.3.4",
+    "moment": "2.19.4",
     "request": "*",
     "serve-favicon": "*"
   },
