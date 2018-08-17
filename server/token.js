@@ -25,35 +25,24 @@ function Token(session) {
 }
 
 Token.prototype.getTokenInternal = function (callback) {
-  var s = this._session;
-  if (this._session.tokeninternal == null) {
-    var ForgeOauth2 = require('forge-oauth2');
-    var apiInstance = new ForgeOauth2.TwoLeggedApi();
-    var clientId = config.credentials.client_id;
-    var clientSecret = config.credentials.client_secret;
-    var grantType = "client_credentials";
-    var opts = {'scope': config.scopeInternal};
-    apiInstance.authenticate(clientId, clientSecret, grantType, opts).then(function(data){
-      s.tokeninternal = data.access_token;
-      callback(s.tokeninternal);
-    });
-  }
-  else {
-    callback(this._session.tokeninternal);
-  }
+  var ForgeOauth2 = require('forge-apis');
+  var apiInstance = new ForgeOauth2.AuthClientTwoLegged(
+    config.credentials.client_id, config.credentials.client_secret,
+    config.scopeInternal, true);
+  apiInstance.authenticate().then(function (oauth) {
+    callback(oauth);
+  });
 };
 
 Token.prototype.getTokenPublic = function (callback) {
   var s = this._session;
   if (this._session.tokenpublic == null) {
-    var ForgeOauth2 = require('forge-oauth2');
-    var apiInstance = new ForgeOauth2.TwoLeggedApi();
-    var clientId = config.credentials.client_id;
-    var clientSecret = config.credentials.client_secret;
-    var grantType = "client_credentials";
-    var opts = {'scope': config.scopePublic};
-    apiInstance.authenticate(clientId, clientSecret, grantType, opts).then(function(data){
-      s.tokenpublic = data.access_token;
+    var ForgeOauth2 = require('forge-apis');
+    var apiInstance = new ForgeOauth2.AuthClientTwoLegged(
+      config.credentials.client_id, config.credentials.client_secret,
+      config.scopePublic, true);
+    apiInstance.authenticate().then(function (oauth) {
+      s.tokenpublic = oauth;
       callback(s.tokenpublic);
     });
   }

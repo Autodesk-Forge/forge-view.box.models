@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 // Copyright (c) Autodesk, Inc. All rights reserved
-// Written by Forge Partner Development 
+// Written by Forge Partner Development
 //
 // Permission to use, copy, modify, and distribute this software in
 // object code form for any purpose and without fee is hereby granted,
@@ -27,21 +27,21 @@ module.exports = {
 
   // set enviroment variables or hard-code here
   credentials: {
-    client_id: process.env.FORGE_CLIENT_ID || '<replace with your consumer key>',
-    client_secret: process.env.FORGE_CLIENT_SECRET || '<replace with your consumer secret>',
+    client_id: process.env.FORGE_CLIENT_ID || 'fPPo2GEvqhZv180UrgGSQAwMTgY9ZLtB',
+    client_secret: process.env.FORGE_CLIENT_SECRET || 'AaQzZEQscUDA1PRF',
   },
 
   // Required scopes for your application on server-side
-  scopeInternal: 'data:read data:write data:create data:search bucket:create bucket:read bucket:update bucket:delete',
+  scopeInternal: ['data:read', 'data:write', 'data:create', 'data:search', 'bucket:create', 'bucket:read', 'bucket:update', 'bucket:delete'],
   // Required scope of the token sent to the client
-  scopePublic: 'data:read',
+  scopePublic: ['viewables:read'],
 
   // BOX configuration
   box: {
     callbackURL: process.env.BOX_CALLBACK_URL || 'http://localhost:3000/api/box/callback/oauth',
     credentials: {
-      client_id: process.env.BOX_CLIENT_ID || '<replace with your box client id',
-      client_secret: process.env.BOX_CLIENT_SECRET || '<replace with your box client secret'
+      client_id: process.env.BOX_CLIENT_ID || 'pspbm09xtmgwrktw50hbwd6sarvda35k',
+      client_secret: process.env.BOX_CLIENT_SECRET || 'oLaPF6mwdroRbmldlWxjGiKtkzNB99XN'
     }
   }
 };
