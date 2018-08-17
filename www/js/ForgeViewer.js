@@ -16,17 +16,13 @@
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////
 
-function getForgeToken() {
-  var token = '';
+function getForgeToken(callback) {
   jQuery.ajax({
     url: '/oauth/token',
     success: function (res) {
-      token = res;
-    },
-    async: false // this request must be synchronous for the Forge Viewer
+      callback(res.access_token, res.expires_in)
+    }
   });
-  if (token != '') console.log('2 legged token (App level public token): ' + token); // debug
-  return token;
 }
 
 function launchViewer(div, urn) {
@@ -34,8 +30,7 @@ function launchViewer(div, urn) {
   var options = {
     'document': 'urn:' + urn,
     'env': 'AutodeskProduction',
-    'getAccessToken': getForgeToken,
-    'refreshToken': getForgeToken
+    getAccessToken: getForgeToken
   };
 
   var viewerElement = document.getElementById(div);

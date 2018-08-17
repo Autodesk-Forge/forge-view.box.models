@@ -30,7 +30,7 @@ var router = express.Router();
 router.get('/oauth/token', function (req, res) {
   var tokenSession = new token(req.session);
   tokenSession.getTokenPublic(function(publicToken){
-    res.end(publicToken);  
+    res.json(publicToken).end();  
   });
 
 });

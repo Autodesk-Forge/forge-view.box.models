@@ -98,7 +98,7 @@ router.post('/integration/sendToTranslation', jsonParser, function (req, res) {
                   url: 'https://developer.api.autodesk.com/oss/v2/buckets/' + ossBucketKey + '/objects/' + ossObjectName,
                   method: "PUT",
                   headers: {
-                    'Authorization': 'Bearer ' + tokenInternal,
+                    'Authorization': 'Bearer ' + tokenInternal.access_token,
                     'Content-Type': mineType
                   },
                   body: filestream
