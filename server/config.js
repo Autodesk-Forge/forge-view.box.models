@@ -27,8 +27,8 @@ module.exports = {
 
   // set enviroment variables or hard-code here
   credentials: {
-    client_id: process.env.FORGE_CLIENT_ID || 'fPPo2GEvqhZv180UrgGSQAwMTgY9ZLtB',
-    client_secret: process.env.FORGE_CLIENT_SECRET || 'AaQzZEQscUDA1PRF',
+    client_id: process.env.FORGE_CLIENT_ID,
+    client_secret: process.env.FORGE_CLIENT_SECRET,
   },
 
   // Required scopes for your application on server-side
@@ -40,8 +40,8 @@ module.exports = {
   box: {
     callbackURL: process.env.BOX_CALLBACK_URL || 'http://localhost:3000/api/box/callback/oauth',
     credentials: {
-      client_id: process.env.BOX_CLIENT_ID || 'pspbm09xtmgwrktw50hbwd6sarvda35k',
-      client_secret: process.env.BOX_CLIENT_SECRET || 'oLaPF6mwdroRbmldlWxjGiKtkzNB99XN'
+      client_id: process.env.BOX_CLIENT_ID,
+      client_secret: process.env.BOX_CLIENT_SECRET
     }
   }
 };
