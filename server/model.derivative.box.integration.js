@@ -34,8 +34,7 @@ var config = require('./config');
 var BoxSDK = require('box-node-sdk');
 
 // forge
-var ForgeModelDerivative = require('forge-model-derivative');
-var ForgeOSS = require('forge-oss');
+var ForgeSDK = require('forge-apis');
 
 var request = require('request');
 
@@ -59,38 +58,30 @@ router.post('/integration/sendToTranslation', jsonParser, function (req, res) {
 
       // Forge OSS Bucket Name: username + userId (no spaces, lower case)
       // that way we have one bucket for each Box account using this application
-      var ossBucketKey = (user.name.replace(/\W+/g, '') + user.id).toLowerCase();
+      var ossBucketKey = config.credentials.client_id.toLowerCase() + (user.name.replace(/\W+/g, '') + user.id).toLowerCase();
 
-      var ossClient = ForgeOSS.ApiClient.instance;
-      var ossOAuth = ossClient.authentications ['oauth2_application']; // not the 'oauth2_access_code', as per documentation
-      ossOAuth.accessToken = tokenInternal;
-      var buckets = new ForgeOSS.BucketsApi();
-      var objects = new ForgeOSS.ObjectsApi();
-      var postBuckets = new ForgeOSS.PostBucketsPayload();
+      var buckets = new ForgeSDK.BucketsApi();
+      var objects = new ForgeSDK.ObjectsApi();
+      var postBuckets = new ForgeSDK.PostBucketsPayload();
       postBuckets.bucketKey = ossBucketKey;
       postBuckets.policyKey = "transient"; // expires in 24h
 
-      buckets.createBucket(postBuckets, null, function (err, data, response) {
-        if (err && err.statusCode!=409){
-          console.log('Error creating bucket ' + ossBucketKey + ' ' + response.statusCode);
-          res.status(response.statusCode).json({error: "Cannot translate: Create Bucket " + response.statusMessage});
-          return;
-        }
+      buckets.createBucket(postBuckets, {}, null, tokenInternal).catch(function (err) {console.log(err);}).then(function () {
 
-        // need the Box file information to get the name...
         box.files.get(boxFileId, null, function (err, fileInfo) {
           var fileName = fileInfo.name;
           var ossObjectName = boxFileId + '.' + re.exec(fileName)[1]; // boxId + fileExtension (required)
 
           // at this point the bucket exists (either created or already there)
-          objects.getObjects(ossBucketKey, null).then(function (objectsInBucket) {
+          objects.getObjects(ossBucketKey, {'limit': 100}, null, tokenInternal).then(function (response) {
             var alreadyTranslated = false;
-
-            objectsInBucket.items.forEach(function (item) {
+            var objectsInBucket = response.body.items;
+            objectsInBucket.forEach(function (item) {
               if (item.objectKey === ossObjectName) {
                 res.status(200).json({
                   readyToShow: true,
                   status: 'File already translated.',
+                  objectId: item.objectId,
                   urn: item.objectId.toBase64()
                 });
                 alreadyTranslated = true;
@@ -100,7 +91,7 @@ router.post('/integration/sendToTranslation', jsonParser, function (req, res) {
             if (!alreadyTranslated) {
               // prepare to download from Box
               box.files.getReadStream(boxFileId, null, function (err, filestream) {
-
+                console.log(tokenInternal);
                 // upload to Forge OSS
                 var mineType = getMineType(fileName);
                 request({
@@ -116,12 +107,8 @@ router.post('/integration/sendToTranslation', jsonParser, function (req, res) {
                   // now translate to SVF (Forge Viewer format)
                   var ossUrn = JSON.parse(body).objectId.toBase64();
 
-                  var mdClient = ForgeModelDerivative.ApiClient.instance;
-                  var mdOAuth = mdClient.authentications ['oauth2_access_code'];
-                  mdOAuth.accessToken = tokenInternal;
-
-                  var derivative = new ForgeModelDerivative.DerivativesApi();
-                  derivative.translate(translateData(ossUrn), null).then(function (data) {
+                  var derivative = new ForgeSDK.DerivativesApi();
+                  derivative.translate(translateData(ossUrn), {}, null, tokenInternal).then(function (data) {
                     res.status(200).json({
                       readyToShow: false,
                       status: 'Translation in progress, please wait...',
@@ -143,12 +130,9 @@ router.post('/integration/isReadyToShow', jsonParser, function (req, res) {
 
   var tokenSession = new token(req.session);
   tokenSession.getTokenInternal(function (tokenInternal) {
-    var mdClient = ForgeModelDerivative.ApiClient.instance;
-    var mdOAuth = mdClient.authentications ['oauth2_access_code'];
-    mdOAuth.accessToken = tokenInternal;
-
-    var derivative = new ForgeModelDerivative.DerivativesApi();
-    derivative.getManifest(ossUrn, null).then(function (manifest) {
+    var derivative = new ForgeSDK.DerivativesApi();
+    derivative.getManifest(ossUrn, {}, null, tokenInternal).then(function (response) {
+      var manifest = response.body;
       if (manifest.status === 'success') {
         res.status(200).json({
           readyToShow: true,
@@ -163,7 +147,7 @@ router.post('/integration/isReadyToShow', jsonParser, function (req, res) {
           urn: ossUrn
         });
       }
-    });
+    }).catch(function (e) { res.status(500).json({error: e.error.body}); });
   });
 });
 

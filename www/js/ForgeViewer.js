@@ -16,6 +16,19 @@
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////
 
+function getForgeToken() {
+  var token = '';
+  jQuery.ajax({
+    url: '/oauth/token',
+    success: function (res) {
+      token = res;
+    },
+    async: false // this request must be synchronous for the Forge Viewer
+  });
+  if (token != '') console.log('2 legged token (App level public token): ' + token); // debug
+  return token;
+}
+
 function launchViewer(div, urn) {
   console.log("Launching Autodesk Viewer for: " + urn);
   var options = {
