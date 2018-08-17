@@ -58,7 +58,7 @@ router.post('/integration/sendToTranslation', jsonParser, function (req, res) {
 
       // Forge OSS Bucket Name: username + userId (no spaces, lower case)
       // that way we have one bucket for each Box account using this application
-      var ossBucketKey = (user.name.replace(/\W+/g, '') + user.id).toLowerCase();
+      var ossBucketKey = config.credentials.client_id.toLowerCase() + (user.name.replace(/\W+/g, '') + user.id).toLowerCase();
 
       var buckets = new ForgeSDK.BucketsApi();
       var objects = new ForgeSDK.ObjectsApi();
@@ -91,7 +91,7 @@ router.post('/integration/sendToTranslation', jsonParser, function (req, res) {
             if (!alreadyTranslated) {
               // prepare to download from Box
               box.files.getReadStream(boxFileId, null, function (err, filestream) {
-
+                console.log(tokenInternal);
                 // upload to Forge OSS
                 var mineType = getMineType(fileName);
                 request({
