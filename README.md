@@ -8,23 +8,28 @@
 [![oAuth2](https://img.shields.io/badge/oAuth2-v1-green.svg)](http://developer.autodesk.com/)
 [![OSS](https://img.shields.io/badge/OSS-v2-green.svg)](http://developer.autodesk.com/)
 [![Model-Derivative](https://img.shields.io/badge/Model%20Derivative-v2-green.svg)](http://developer.autodesk.com/)
-[![Viewer](https://img.shields.io/badge/Viewer-v3.3-green.svg)](http://developer.autodesk.com/)
+[![Viewer](https://img.shields.io/badge/Viewer-v6.0-green.svg)](http://developer.autodesk.com/)
 
 # Description
 
 This sample use [Model Derivative API](https://developer.autodesk.com/en/docs/model-derivative/v2/overview/) to translate [Box](https://www.box.com/about-us) files into [Viewer](https://developer.autodesk.com/en/docs/viewer/v2/overview/). The front-end will look like:
-  
+
 ![thumbnail](www/img/indexpage.png)
 
 ## Live version
 
-See it live at [forgeboxviewer.herokuapp.com](http://forgeboxviewer.herokuapp.com/). 
+See it live at [forgeboxviewer.herokuapp.com](http://forgeboxviewer.herokuapp.com/).
 
 # Setup
 
 For using this sample, you need an Autodesk developer credentials. Visit the [Forge Developer Portal](https://developer.autodesk.com), sign up for an account, then [create an app](https://developer.autodesk.com/myapps/create). For this new app, use <b>http://localhost:3000/api/forge/callback/oauth</b> as Callback URL. Finally take note of the <b>Client ID</b> and <b>Client Secret</b>.
 
-You also need a Box Developer credentials. Visit the [Box Developer](https://developer.box.com), Log in or Sign up, follow the steps to [Create a Box Application](https://app.box.com/developers/services/edit/). For this new app, use <b>http://localhost:3000/api/box/callback/oauth</b> as redirect_uri. Finally, take note of the <b>client_id</b> and <b>client_secret</b>.
+You also need a Box Developer credentials:
+1. Visit the [Box Developer](https://developer.box.com), for Log in or Sign up.
+2. Go to [Create a Box Application](https://app.box.com/developers/services/edit/).
+3. Select <b>Custom App</b> and <b>Standard OAuth 2.0</b> (User Authentication)
+4. For this new app, use <b>http://localhost:3000/api/box/callback/oauth</b> as redirect_uri.
+5. Finally, take note of the <b>client_id</b> and <b>client_secret</b>, or copy them directly to your configuration
 
 ### Run locally
 
@@ -34,7 +39,7 @@ Clone this project or download it. It's recommended to install [GitHub desktop](
 
     git clone https://github.com/autodesk-forge/model.derivative-nodejs-box.viewer
 
-To run it, install the required packages, set the enviroment variables with your client ID & secret and finally start it. Via command line, navigate to the folder where this repository was cloned and use the following:
+To run it, install the required packages, set the environment variables with your client ID & secret and finally start it. Via command line, navigate to the folder where this repository was cloned and use the following:
 
 Mac OSX/Linux (Terminal)
 

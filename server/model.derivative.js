@@ -25,22 +25,23 @@ var token = require('./token');
 var express = require('express');
 var router = express.Router();
 
+var config = require('./config');
+
 // forge
-var ForgeModelDerivative = require('forge-model-derivative');
+var ForgeSDK = require('forge-apis');
 
 router.get('/md/viewerFormats', function (req, res) {
   var tokenSession = new token(req.session);
   tokenSession.getTokenPublic(function(tokenPublic){
-    
-    var defaultClient = ForgeModelDerivative.ApiClient.instance;
-    var oauth = defaultClient.authentications ['oauth2_access_code'];
-    oauth.accessToken = tokenPublic;
-
-    var derivative = new ForgeModelDerivative.DerivativesApi();
-    derivative.getFormats(null).then(function (formats) {
-      res.status(200).json(formats.formats.svf);
-    })
+    var derivative = new ForgeSDK.DerivativesApi();
+    derivative.getFormats({}, null, tokenPublic).then(function (response) {
+      res.status(200).json(response.body.formats.svf);
+    }).catch(function (err) {
+      console.log(err);
+      res.status(500).end();
+    });
   });
+  //});
 });
 
 module.exports = router;

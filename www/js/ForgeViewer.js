@@ -16,13 +16,21 @@
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////
 
+function getForgeToken(callback) {
+  jQuery.ajax({
+    url: '/oauth/token',
+    success: function (res) {
+      if (callback) callback(res.access_token, res.expires_in);
+    }
+  });
+}
+
 function launchViewer(div, urn) {
   console.log("Launching Autodesk Viewer for: " + urn);
   var options = {
     'document': 'urn:' + urn,
     'env': 'AutodeskProduction',
-    'getAccessToken': getForgeToken,
-    'refreshToken': getForgeToken
+    getAccessToken: getForgeToken
   };
 
   var viewerElement = document.getElementById(div);
@@ -46,17 +54,6 @@ function loadDocument(documentId){
         'type': 'geometry',
       }, true);
       if (geometryItems.length > 0) {
-        geometryItems.forEach(function (item, index) {
-          /*
-          // WIP, show viewables
-          var v = $('<input type="button" value="' + item.name + '" class="btn btn-primary btn-xs"/>&nbsp;');
-          v.click(function () {
-            viewer.impl.unloadCurrentModel();
-            viewer.load(doc.getViewablePath(geometryItems[index]));
-          });
-          $('#viewables').append(v);
-          */
-        });
         viewer.load(doc.getViewablePath(geometryItems[0])); // show 1st view on this document...
       }
     },
