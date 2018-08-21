@@ -19,36 +19,36 @@
 'use strict'; // http://www.w3schools.com/js/js_strict.asp
 
 // token handling in session
-var token = require('./token');
+let token = require('./token');
 
 // web framework
-var express = require('express');
-var router = express.Router();
-var bodyParser = require('body-parser');
-var jsonParser = bodyParser.json();
+let express = require('express');
+let router = express.Router();
+let bodyParser = require('body-parser');
+let jsonParser = bodyParser.json();
 
 // config information, such as client ID and secret
-var config = require('./config');
+let config = require('./config');
 
 // box sdk: https://github.com/box/box-node-sdk/
-var BoxSDK = require('box-node-sdk');
+let BoxSDK = require('box-node-sdk');
 
 // forge
-var ForgeSDK = require('forge-apis');
+let ForgeSDK = require('forge-apis');
 
-var request = require('request');
+let request = require('request');
 
 router.post('/integration/sendToTranslation', jsonParser, function (req, res) {
-  var boxFileId = req.body.boxfile;
-  var tokenSession = new token(req.session);
+  let boxFileId = req.body.boxfile;
+  let tokenSession = new token(req.session);
   tokenSession.getTokenInternal(function (tokenInternal) {
 
-    var sdk = new BoxSDK({
+    let sdk = new BoxSDK({
       clientID: config.box.credentials.client_id, // required
       clientSecret: config.box.credentials.client_secret // required
     });
 
-    var box = sdk.getBasicClient(tokenSession.getBoxToken());
+    let box = sdk.getBasicClient(tokenSession.getBoxToken());
     box.users.get(box.CURRENT_USER_ID, null, function (err, user) {
       if (err || user == null) {
         console.log('model.derivative.box.integration:sentToTranslation:box.user.get => ' + err);
@@ -58,24 +58,24 @@ router.post('/integration/sendToTranslation', jsonParser, function (req, res) {
 
       // Forge OSS Bucket Name: username + userId (no spaces, lower case)
       // that way we have one bucket for each Box account using this application
-      var ossBucketKey = config.credentials.client_id.toLowerCase() + (user.name.replace(/\W+/g, '') + user.id).toLowerCase();
+      let ossBucketKey = config.credentials.client_id.toLowerCase() + (user.name.replace(/\W+/g, '') + user.id).toLowerCase();
 
-      var buckets = new ForgeSDK.BucketsApi();
-      var objects = new ForgeSDK.ObjectsApi();
-      var postBuckets = new ForgeSDK.PostBucketsPayload();
+      let buckets = new ForgeSDK.BucketsApi();
+      let objects = new ForgeSDK.ObjectsApi();
+      let postBuckets = new ForgeSDK.PostBucketsPayload();
       postBuckets.bucketKey = ossBucketKey;
       postBuckets.policyKey = "transient"; // expires in 24h
 
       buckets.createBucket(postBuckets, {}, null, tokenInternal).catch(function (err) {console.log(err);}).then(function () {
 
         box.files.get(boxFileId, null, function (err, fileInfo) {
-          var fileName = fileInfo.name;
-          var ossObjectName = boxFileId + '.' + re.exec(fileName)[1]; // boxId + fileExtension (required)
+          let fileName = fileInfo.name;
+          let ossObjectName = boxFileId + '.' + re.exec(fileName)[1]; // boxId + fileExtension (required)
 
           // at this point the bucket exists (either created or already there)
           objects.getObjects(ossBucketKey, {'limit': 100}, null, tokenInternal).then(function (response) {
-            var alreadyTranslated = false;
-            var objectsInBucket = response.body.items;
+            let alreadyTranslated = false;
+            let objectsInBucket = response.body.items;
             objectsInBucket.forEach(function (item) {
               if (item.objectKey === ossObjectName) {
                 res.status(200).json({
@@ -93,7 +93,7 @@ router.post('/integration/sendToTranslation', jsonParser, function (req, res) {
               box.files.getReadStream(boxFileId, null, function (err, filestream) {
                 console.log(tokenInternal);
                 // upload to Forge OSS
-                var mineType = getMineType(fileName);
+                let mineType = getMineType(fileName);
                 request({
                   url: 'https://developer.api.autodesk.com/oss/v2/buckets/' + ossBucketKey + '/objects/' + ossObjectName,
                   method: "PUT",
@@ -103,11 +103,12 @@ router.post('/integration/sendToTranslation', jsonParser, function (req, res) {
                   },
                   body: filestream
                 }, function (error, response, body) {
-
+                  console.log("body");
+                  console.log(body);
                   // now translate to SVF (Forge Viewer format)
-                  var ossUrn = JSON.parse(body).objectId.toBase64();
+                  let ossUrn = JSON.parse(body).objectId.toBase64();
 
-                  var derivative = new ForgeSDK.DerivativesApi();
+                  let derivative = new ForgeSDK.DerivativesApi();
                   derivative.translate(translateData(ossUrn), {}, null, tokenInternal).then(function (data) {
                     res.status(200).json({
                       readyToShow: false,
@@ -126,13 +127,13 @@ router.post('/integration/sendToTranslation', jsonParser, function (req, res) {
 });
 
 router.post('/integration/isReadyToShow', jsonParser, function (req, res) {
-  var ossUrn = req.body.urn;
+  let ossUrn = req.body.urn;
 
-  var tokenSession = new token(req.session);
+  let tokenSession = new token(req.session);
   tokenSession.getTokenInternal(function (tokenInternal) {
-    var derivative = new ForgeSDK.DerivativesApi();
+    let derivative = new ForgeSDK.DerivativesApi();
     derivative.getManifest(ossUrn, {}, null, tokenInternal).then(function (response) {
-      var manifest = response.body;
+      let manifest = response.body;
       if (manifest.status === 'success') {
         res.status(200).json({
           readyToShow: true,
@@ -156,7 +157,7 @@ String.prototype.toBase64 = function () {
 };
 
 function translateData(ossUrn) {
-  var postJob =
+  let postJob =
   {
     input: {
       urn: ossUrn
@@ -173,11 +174,11 @@ function translateData(ossUrn) {
   return postJob;
 }
 
-var re = /(?:\.([^.]+))?$/; // regex to extract file extension
+let re = /(?:\.([^.]+))?$/; // regex to extract file extension
 
 function getMineType(fileName) {
-  var extension = re.exec(fileName)[1];
-  var types = {
+  let extension = re.exec(fileName)[1];
+  let types = {
     'png': 'application/image',
     'jpg': 'application/image',
     'txt': 'application/txt',

@@ -20,7 +20,7 @@ function getForgeToken(callback) {
   jQuery.ajax({
     url: '/oauth/token',
     success: function (res) {
-      callback(res.access_token, res.expires_in)
+      if (callback) callback(res.access_token, res.expires_in);
     }
   });
 }
@@ -54,17 +54,6 @@ function loadDocument(documentId){
         'type': 'geometry',
       }, true);
       if (geometryItems.length > 0) {
-        geometryItems.forEach(function (item, index) {
-          /*
-          // WIP, show viewables
-          var v = $('<input type="button" value="' + item.name + '" class="btn btn-primary btn-xs"/>&nbsp;');
-          v.click(function () {
-            viewer.impl.unloadCurrentModel();
-            viewer.load(doc.getViewablePath(geometryItems[index]));
-          });
-          $('#viewables').append(v);
-          */
-        });
         viewer.load(doc.getViewablePath(geometryItems[0])); // show 1st view on this document...
       }
     },
