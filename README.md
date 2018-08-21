@@ -24,7 +24,12 @@ See it live at [forgeboxviewer.herokuapp.com](http://forgeboxviewer.herokuapp.co
 
 For using this sample, you need an Autodesk developer credentials. Visit the [Forge Developer Portal](https://developer.autodesk.com), sign up for an account, then [create an app](https://developer.autodesk.com/myapps/create). For this new app, use <b>http://localhost:3000/api/forge/callback/oauth</b> as Callback URL. Finally take note of the <b>Client ID</b> and <b>Client Secret</b>.
 
-You also need a Box Developer credentials. Visit the [Box Developer](https://developer.box.com), Log in or Sign up, follow the steps to [Create a Box Application](https://app.box.com/developers/services/edit/). For this new app, use <b>http://localhost:3000/api/box/callback/oauth</b> as redirect_uri. Finally, take note of the <b>client_id</b> and <b>client_secret</b>.
+You also need a Box Developer credentials:
+1. Visit the [Box Developer](https://developer.box.com), for Log in or Sign up.
+2. Go to [Create a Box Application](https://app.box.com/developers/services/edit/).
+3. Select <b>Custom App</b> and <b>Standard OAuth 2.0</b> (User Authentication)
+4. For this new app, use <b>http://localhost:3000/api/box/callback/oauth</b> as redirect_uri.
+5. Finally, take note of the <b>client_id</b> and <b>client_secret</b>, or copy them directly to your configuration
 
 ### Run locally
 
