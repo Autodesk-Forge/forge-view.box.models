@@ -91,7 +91,6 @@ router.post('/integration/sendToTranslation', jsonParser, function (req, res) {
             if (!alreadyTranslated) {
               // prepare to download from Box
               box.files.getReadStream(boxFileId, null, function (err, filestream) {
-                console.log(tokenInternal);
                 // upload to Forge OSS
                 let mineType = getMineType(fileName);
                 request({
@@ -103,8 +102,6 @@ router.post('/integration/sendToTranslation', jsonParser, function (req, res) {
                   },
                   body: filestream
                 }, function (error, response, body) {
-                  console.log("body");
-                  console.log(body);
                   // now translate to SVF (Forge Viewer format)
                   let ossUrn = JSON.parse(body).objectId.toBase64();
 
