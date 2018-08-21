@@ -26,6 +26,10 @@ This sample use [Model Derivative API](https://developer.autodesk.com/en/docs/mo
 
 See it live at [forgeboxviewer.herokuapp.com](http://forgeboxviewer.herokuapp.com/).
 
+## Industry background
+
+As the data can be anywhere, and a very common scenario is to use generic data storage, like Box, to store personal or business files, share between employees and manage versions. With Forge you can view these files implementing a transparent viewing approach, as demonstrated in this sample. On specific cases, the Box connection can be replaced with other or with a company local storage.
+
 ### Prerequisites
 
 Working on this application touch both server and client sides.  
