@@ -16,9 +16,21 @@ This sample use [Model Derivative API](https://developer.autodesk.com/en/docs/mo
 
 ![thumbnail](www/img/indexpage.png)
 
+## Technologies overview
+   1. <b>Languages</b>: JavaScript,
+   2. <b>Forge</b>: Viewer, Buckets-Api, Objects-Api, model-derivative
+   3. <b>Technologies/frameworks</b>: Express.js, jQuery, jstree.js, request.js, moment.js, nodemon
+   4. <b>Other APIs</b>: oAuth2, box-node-sdk
+
 ## Live version
 
 See it live at [forgeboxviewer.herokuapp.com](http://forgeboxviewer.herokuapp.com/).
+
+### Prerequisites
+
+Working on this application touch both server and client sides.  
+For <b>Basic</b> use for presentation purposes, you will needed knowledge about: <b>Node.js</b>, <b>REST Api</b>, on back-end and <b>HTML</b>, <b>jQuery</b>, <b>Ajax</b> on front-end.  
+For develop more <b>complex</b> application you certainly needed knowledge about: <b>Forge-SDK</b> (<b>Forsge-Api</b>), <b>Forge Derivatives-Api</b>, <b>JS Promises</b>, <b>Oauth Authentication</b>.
 
 # Setup
 
@@ -100,5 +112,5 @@ Please see the [LICENSE](LICENSE) file for full details.
 
 ## Written by
 
-Augusto Goncalves (Forge Partner Development)<br />
+Augusto Goncalves, Vadym Kuzin (Forge Partner Development)<br />
 http://forge.autodesk.com<br />
