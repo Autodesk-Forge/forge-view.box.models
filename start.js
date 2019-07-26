@@ -15,19 +15,34 @@
 // DOES NOT WARRANT THAT THE OPERATION OF THE PROGRAM WILL BE
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////
+const path = require('path');
+const express = require('express');
+const session = require('cookie-session');
 
-'use strict';
+if (process.env.FORGE_CLIENT_ID == null || process.env.FORGE_CLIENT_SECRET == null) {
+  console.warn('*****************\nWARNING: Forge Client ID & Client Secret not defined as environment variables.\n*****************');
+  return;
+}
 
-var app = require('./server/server');
+if (process.env.BOX_CLIENT_ID == null || process.env.BOX_CLIENT_SECRET == null) {
+  console.warn('*****************\nWARNING: Box Client ID & Client Secret not defined as environment variables.\n*****************');
+  return;
+}
 
-// start server
-var server = app.listen(app.get('port'), function () {
-  if (process.env.FORGE_CLIENT_ID == null || process.env.FORGE_CLIENT_SECRET == null)
-    console.log('*****************\nWARNING: Forge Client ID & Client Secret not defined as environment variables.\n*****************');
+let app = express();
+app.set('port', process.env.PORT || 3000);
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  name: 'forge_session',
+  keys: ['forge_secure_key'],
+  maxAge: 14 * 24 * 60 * 60 * 1000 // 14 days, same as refresh token
+}));
+app.use(express.json({ limit: '50mb' }));
+app.use('/', require('./routes/oauth'));
+app.use('/', require('./routes/model.derivative'));
+app.use('/', require('./routes/box.tree'));
+app.use('/', require('./routes/model.derivative.box.integration'));
 
-  if (process.env.BOX_CLIENT_ID == null || process.env.BOX_CLIENT_SECRET == null)
-    console.log('*****************\nWARNING: Box Client ID & Client Secret not defined as environment variables.\n*****************');
-
-  console.log('Starting at ' + (new Date()).toString());
-  console.log('Server listening on port ' + server.address().port);
+app.listen(app.get('port'), function () {
+  console.log('Server listening on port ' + app.get('port'));
 });
