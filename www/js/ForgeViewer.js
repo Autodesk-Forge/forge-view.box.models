@@ -16,49 +16,38 @@
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////
 
-function getForgeToken(callback) {
-  jQuery.ajax({
-    url: '/oauth/token',
-    success: function (res) {
-      if (callback) callback(res.access_token, res.expires_in);
-    }
-  });
+async function getForgeToken(callback) {
+  const resp = await fetch('/oauth/token');
+  if (!resp.ok) {
+    const msg = await resp.text();
+    console.error('Could not obtain access token', msg);
+    return;
+  }
+  const credentials = await resp.json();
+  callback(credentials.access_token, credentials.expires_in)
 }
 
 function launchViewer(div, urn) {
-  console.log("Launching Autodesk Viewer for: " + urn);
-  var options = {
-    'document': 'urn:' + urn,
-    'env': 'AutodeskProduction',
+  const options = {
+    env: 'AutodeskProduction',
     getAccessToken: getForgeToken
   };
-
-  var viewerElement = document.getElementById(div);
-  viewer = new Autodesk.Viewing.Private.GuiViewer3D(viewerElement, {});
-  Autodesk.Viewing.Initializer(
-    options,
-    function () {
-      viewer.initialize();
-      loadDocument(options.document);
-    }
-  );
+  Autodesk.Viewing.Initializer(options, function () {
+    viewer = new Autodesk.Viewing.Private.GuiViewer3D(document.getElementById(div), {});
+    viewer.start();
+    loadDocument('urn:' + urn);
+  });
 }
 
-function loadDocument(documentId){
-  var oauth3legtoken = getForgeToken();
-
+function loadDocument(documentId) {
   Autodesk.Viewing.Document.load(
     documentId,
-    function (doc) { // onLoadCallback
-      geometryItems = Autodesk.Viewing.Document.getSubItemsWithProperties(doc.getRootItem(), {
-        'type': 'geometry',
-      }, true);
-      if (geometryItems.length > 0) {
-        viewer.load(doc.getViewablePath(geometryItems[0])); // show 1st view on this document...
-      }
+    function onSuccess(doc) {
+      const defaultGeom = doc.getRoot().getDefaultGeometry();
+      viewer.loadDocumentNode(doc, defaultGeom);
     },
-    function (errorMsg) { // onErrorCallback
-      console.log(errorMsg);
+    function onError(err) {
+      console.error(err);
     }
-  )
+  );
 }
