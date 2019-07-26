@@ -42,13 +42,6 @@ app.use(favicon(__dirname + '/../www/favicon.ico'));
 
 // prepare server routing
 app.use('/', express.static(__dirname + '/../www')); // redirect static calls
-app.use('/js', express.static(__dirname + '/../node_modules/bootstrap/dist/js')); // redirect static calls
-app.use('/js', express.static(__dirname + '/../node_modules/jquery/dist')); // redirect static calls
-app.use('/js', express.static(__dirname + '/../node_modules/jstree/dist')); // redirect static calls
-app.use('/js', express.static(__dirname + '/../node_modules/moment/min')); // redirect static calls
-app.use('/css', express.static(__dirname + '/../node_modules/bootstrap/dist/css')); // redirect static calls
-app.use('/css/jstree', express.static(__dirname + '/../node_modules/jstree/dist/themes/default')); // redirect static calls (jstree use 'style.css', which is very generic, so let's use an extra folder)
-app.use('/fonts', express.static(__dirname + '/../node_modules/bootstrap/dist/fonts')); // redirect static calls
 app.set('port', process.env.PORT || 3000); // main port
 
 // prepare our API endpoint routing
